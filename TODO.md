@@ -1,0 +1,1 @@
+* Read GitHub Api responses into objects to avoid typos in keys, or other misuses, and to validate data we get back from the Api.

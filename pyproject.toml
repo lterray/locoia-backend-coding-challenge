@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "locoia-backend-coding-challenge"
+version = "0.1.0"
+description = "Homework for the interview for Locoia Hamburg"
+authors = ["Laszlo Terray <laszlo.terray@gmail.com>"]
+readme = "README.md"
+packages = [{include = "locoia_backend_coding_challenge"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+flask = "^2.2.3"
+requests = "^2.28.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

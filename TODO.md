@@ -1,1 +1,2 @@
 * Read GitHub Api responses into objects to avoid typos in keys, or other misuses, and to validate data we get back from the Api.
+* Now we don't download big gist files. We should handle it in a more user-friendly way.

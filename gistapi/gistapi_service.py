@@ -7,6 +7,9 @@ from typing import Dict, List, Callable
 
 from gistapi import util
 
+# bigger files are not searched now
+MAX_FILE_SIZE = 5
+
 
 def get_gists_for_user(username: str):
     """Provides the list of gist metadata for a given user.
@@ -60,7 +63,18 @@ def get_raw_file_urls_by_gists(gists) -> Dict[str, List[str]]:
     return raw_file_urls_by_gists
 
 
+def get_file_size_by_url(file_url: str):
+    # https://stackoverflow.com/a/55226651
+    response = requests.head(file_url, allow_redirects=True)
+    size_in_bites = response.headers.get('content-length', -1)
+    size_in_mb = int(size_in_bites) / float(1 << 20)
+    return size_in_mb
+
 async def download_file_and_map(file_url, session: aiohttp.ClientSession, map_function: Callable):
+    file_size = get_file_size_by_url(file_url)
+    if MAX_FILE_SIZE < file_size:
+        return False
+
     async with session.get(url=file_url) as response:
         resp = await response.text()
         return map_function(resp) if map_function else resp
@@ -128,6 +142,10 @@ def get_matching_gist_urls_sync(username: str, pattern: str) -> List[str]:
     for gist_url, raw_file_urls_by_gists in raw_file_urls_by_gists.items():
         file_contents[gist_url] = []
         for raw_file_url in raw_file_urls_by_gists:
+            file_size = get_file_size_by_url(raw_file_url)
+            if MAX_FILE_SIZE < file_size:
+                continue
+
             response = requests.get(raw_file_url)
             file_contents[gist_url].append(response.text)
 

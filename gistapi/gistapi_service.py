@@ -15,14 +15,28 @@ def get_gists_for_user(username: str):
     more information.
     Args:
         username (string): the user to query gists for
-        ?per_page=2&page=2
     Returns:
         The list of dicts parsed from the json response from the Github API.  See
         the above URL for details of the expected structure.
     """
-    gists_url = 'https://api.github.com/users/{username}/gists'.format(username=username)
-    response = requests.get(gists_url)
-    return response.json()
+    per_page = 100
+    gists_for_user = []
+    found_page_with_less_than_maximum_items = False
+    page = 1
+
+    while not found_page_with_less_than_maximum_items:
+        gists_url = f'https://api.github.com/users/{username}/gists?per_page={per_page}&page={page}'
+        try:
+            response = requests.get(gists_url)
+        except requests.exceptions.ConnectionError as ex:
+            raise requests.exceptions.ConnectionError('Github api is not available currently')
+
+        gists_on_current_page = requests.get(gists_url).json()
+        gists_for_user.extend(gists_on_current_page)
+        found_page_with_less_than_maximum_items = len(gists_on_current_page) < per_page
+        page += 1
+
+    return gists_for_user
 
 
 def get_raw_file_urls_by_gists(gists) -> Dict[str, List[str]]:

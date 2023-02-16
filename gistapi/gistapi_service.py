@@ -5,7 +5,7 @@ import aiohttp
 import requests
 from typing import Dict, List, Callable
 
-from util import timeit
+from gistapi import util
 
 
 def get_gists_for_user(username: str):
@@ -31,7 +31,8 @@ def get_gists_for_user(username: str):
         except requests.exceptions.ConnectionError as ex:
             raise requests.exceptions.ConnectionError('Github api is not available currently')
 
-        gists_on_current_page = requests.get(gists_url).json()
+        response = requests.get(gists_url)
+        gists_on_current_page = response.json()
         gists_for_user.extend(gists_on_current_page)
         found_page_with_less_than_maximum_items = len(gists_on_current_page) < per_page
         page += 1
@@ -87,7 +88,7 @@ async def check_files_from_net_against_pattern(file_urls: List[str], pattern: st
         return dict(zip(file_urls, matching_data_of_files))
 
 
-@timeit
+@util.timeit
 def get_matching_gist_urls_async(username: str, pattern: str) -> List[str]:
     """
     Async solution which uses aiohttp and asyncio to download and check files in parallel
@@ -111,7 +112,7 @@ def get_matching_gist_urls_async(username: str, pattern: str) -> List[str]:
     return matching_gist_urls
 
 
-@timeit
+@util.timeit
 def get_matching_gist_urls_sync(username: str, pattern: str) -> List[str]:
     """
     Sync solution which simply gets all the files of all gists sequentially and

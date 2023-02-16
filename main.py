@@ -8,10 +8,8 @@ endpoint to verify the server is up and responding and a search endpoint
 providing a search across all public Gists for a given Github account.
 """
 
-import requests
 from flask import Flask, jsonify, request
-from gistapi_service import get_matching_gist_urls_sync,\
-    get_matching_gist_urls_async
+from gistapi import gistapi_service
 
 app = Flask(__name__)
 
@@ -32,8 +30,8 @@ def search():
     if not username or not pattern:
         raise ValueError("'username' or 'pattern' query parameter is missing from the url")
 
-    matching_gist_urls_sync = get_matching_gist_urls_sync(username, pattern)
-    matching_gist_urls_async = get_matching_gist_urls_async(username, pattern)
+    matching_gist_urls_sync = gistapi_service.get_matching_gist_urls_sync(username, pattern)
+    matching_gist_urls_async = gistapi_service.get_matching_gist_urls_async(username, pattern)
 
     result = {
         'status': 'success',

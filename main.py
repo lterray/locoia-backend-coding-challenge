@@ -10,6 +10,7 @@ providing a search across all public Gists for a given Github account.
 
 from flask import Flask, jsonify, request
 from gistapi import gistapi_service
+import requests
 
 app = Flask(__name__)
 
@@ -26,19 +27,23 @@ def search():
     """
     username = request.args.get('username')
     pattern = request.args.get('pattern')
+    error_message = ''
 
     if not username or not pattern:
-        raise ValueError("'username' or 'pattern' query parameter is missing from the url")
+        error_message = "'username' or 'pattern' query parameter is missing from the url"
 
-    matching_gist_urls_sync = gistapi_service.get_matching_gist_urls_sync(username, pattern)
-    matching_gist_urls_async = gistapi_service.get_matching_gist_urls_async(username, pattern)
+    try:
+        matching_gist_urls_sync = gistapi_service.get_matching_gist_urls_sync(username, pattern)
+        matching_gist_urls_async = gistapi_service.get_matching_gist_urls_async(username, pattern)
+    except (requests.exceptions.ConnectionError, ValueError) as error_with_message:
+        error_message = str(error_with_message)
 
     result = {
-        'status': 'success',
+        'status': 'success' if not error_message else 'error',
         'username': username,
         'pattern': pattern,
-        'matches_sync': matching_gist_urls_sync,
-        'matches_async': matching_gist_urls_async
+        'matches_sync': matching_gist_urls_sync if not error_message else [],
+        'matches_async': matching_gist_urls_async if not error_message else []
     }
 
     return jsonify(result)

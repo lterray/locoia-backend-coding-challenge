@@ -31,10 +31,11 @@ def get_gists_for_user(username: str):
         gists_url = f'https://api.github.com/users/{username}/gists?per_page={per_page}&page={page}'
         try:
             response = requests.get(gists_url)
+            if response.status_code != 200:
+                raise ValueError('Invalid GitHub API call, most probably not existing username')
         except requests.exceptions.ConnectionError as ex:
             raise requests.exceptions.ConnectionError('Github api is not available currently')
 
-        response = requests.get(gists_url)
         gists_on_current_page = response.json()
         gists_for_user.extend(gists_on_current_page)
         found_page_with_less_than_maximum_items = len(gists_on_current_page) < per_page

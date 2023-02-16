@@ -5,6 +5,8 @@ import aiohttp
 import requests
 from typing import Dict, List, Callable
 
+from util import timeit
+
 
 def get_gists_for_user(username: str):
     """Provides the list of gist metadata for a given user.
@@ -71,6 +73,7 @@ async def check_files_from_net_against_pattern(file_urls: List[str], pattern: st
         return dict(zip(file_urls, matching_data_of_files))
 
 
+@timeit
 def get_matching_gist_urls_async(username: str, pattern: str) -> List[str]:
     """
     Async solution which uses aiohttp and asyncio to download and check files in parallel
@@ -94,6 +97,7 @@ def get_matching_gist_urls_async(username: str, pattern: str) -> List[str]:
     return matching_gist_urls
 
 
+@timeit
 def get_matching_gist_urls_sync(username: str, pattern: str) -> List[str]:
     """
     Sync solution which simply gets all the files of all gists sequentially and

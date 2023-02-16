@@ -7,12 +7,18 @@ module implements a Flask server exposing two endpoints: a simple ping
 endpoint to verify the server is up and responding and a search endpoint
 providing a search across all public Gists for a given Github account.
 """
+import json
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, redirect, url_for
 from gistapi import gistapi_service
 import requests
 
 app = Flask(__name__)
+
+
+@app.route("/", methods=['GET'])
+def home():
+    return render_template('search.html')
 
 
 @app.route("/api/v1/search", methods=['GET'])
@@ -40,8 +46,6 @@ def search():
 
     result = {
         'status': 'success' if not error_message else 'error',
-        'username': username,
-        'pattern': pattern,
         'matches_sync': matching_gist_urls_sync if not error_message else [],
         'matches_async': matching_gist_urls_async if not error_message else []
     }

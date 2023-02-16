@@ -18,8 +18,7 @@ You can search among public gists of a GitHub user. Usage information below.
 
 ## Use the gist search
 
-Open the search on http://127.0.0.1:9876/api/v1/search with query parameters "username" and "pattern" for example:
-http://127.0.0.1:9876/api/v1/search?username=justdionysus&pattern=import%20requests
+Simply open http://127.0.0.1:9876 and fill parameters "username" and "pattern", for example: "justdionysus" and "imp.*re"
 
 ## Run tests
 

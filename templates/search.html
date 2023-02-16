@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <title>Search in gists of user</title>
+    </head>
+    <body>
+        <h1>Search in gists of user</h1>
+        <form action="/api/v1/search" method="get">
+            <label for="username">Username</label>
+            <input name="username" type="text" value="{{ username }}">
+            <br>
+            <label for="pattern">Pattern</label>
+            <input name="pattern" type="text" value="{{ pattern }}">
+            <br>
+            <button type="submit">Search</button>
+        </form>
+        {% if result %}
+            <textarea cols="60" rows="30">{{ result }}</textarea>
+        {% endif %}
+    </body>
+</html>

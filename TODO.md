@@ -1,19 +1,21 @@
 ## Possible improvements
 * Read GitHub Api responses into objects to avoid typos in keys, or other misuses, and to validate data
 we get back from the Api. 
-* Now we don't download big gist files. We should handle it in a more user-friendly way.
-
-  * One idea:
+* Now we don't download [big gist files and we don't handle gists with more than 300 files](https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28).
+We should handle these cases.
+  * One idea for the big files:
     * Return the gist_urls and the corresponding big file urls when their small ones did not match the pattern. 
     * Separate backend call can start a check of these big files. This call can be web socket based to be more verbose. 
-    * Here the server checks the big files in parallel, but not downloading them just streaming their data to save memory. 
+    * Then the server git-pulls the files. The huge ones can be read as a stream.
     * Maybe we can warn the user not to use a regexp which checks multiple lines as that would make the streaming
 solution harder. Alternatively we can check few lines together with the regexp but that will slow down the search
 significantly (if we check x lines together then it will be O(x * N) instead of O(N) which is a constant increase but
 significant in this case I think)
     * When we find a match or finish a big file then we can send back its result to the frontend
 
-* We need more tests. 
+* We need more tests.
+* Maybe the "big file" size limit can be converted to environment variable with time. Same can happen with the auth
+token if we use one.
 * Can we use a database? What for? SQL or NoSQL?
 
   * If we allow some caching in the process (you mentioned 4 hours delay) then we can use a database for that
